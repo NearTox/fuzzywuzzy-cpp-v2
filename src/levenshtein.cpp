@@ -97,7 +97,6 @@
 #endif /* NO_PYTHON */
 
 #if PY_MAJOR_VERSION >= 3
-#define LEV_PYTHON3
 #define PyString_Type PyBytes_Type
 #define PyString_GET_SIZE PyBytes_GET_SIZE
 #define PyString_AS_STRING PyBytes_AS_STRING
@@ -114,7 +113,7 @@
 #define PY_MOD_INIT_FUNC_DEF(name) PyObject* PyInit_##name(void)
 #else
 #define PY_INIT_MOD(module, name, doc, methods) \
-            Py_InitModule3(name, methods, doc);
+            module = Py_InitModule3(name, methods, doc);
 #define PY_MOD_INIT_FUNC_DEF(name) void init##name(void)
 #endif /* PY_MAJOR_VERSION */
 
@@ -166,7 +165,7 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
 
 #define Levenshtein_DESC \
   "A C extension module for fast computation of:\n" \
-  "- Levenshtein (edit) distance and edit sequence manipulation\n" \
+  "- Levenshtein (edit) distance and edit sequence manipluation\n" \
   "- string similarity\n" \
   "- approximate median strings, and generally string averaging\n" \
   "- string sequence and set similarity\n" \
@@ -185,7 +184,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "distance(string1, string2)\n" \
   "\n" \
   "Examples (it's hard to spell Levenshtein correctly):\n" \
-  "\n" \
   ">>> distance('Levenshtein', 'Lenvinsten')\n" \
   "4\n" \
   ">>> distance('Levenshtein', 'Levensthein')\n" \
@@ -203,13 +201,12 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "ratio(string1, string2)\n" \
   "\n" \
   "The similarity is a number between 0 and 1, it's usually equal or\n" \
-  "somewhat higher than difflib.SequenceMatcher.ratio(), because it's\n" \
+  "somewhat higher than difflib.SequenceMatcher.ratio(), becuase it's\n" \
   "based on real minimal edit distance.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
-  ">>> ratio('Hello world!', 'Holly grail!')  # doctest: +ELLIPSIS\n" \
-  "0.583333...\n" \
+  ">>> ratio('Hello world!', 'Holly grail!')\n" \
+  "0.58333333333333337\n" \
   ">>> ratio('Brian', 'Jesus')\n" \
   "0.0\n" \
   "\n" \
@@ -241,10 +238,10 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "Examples:\n" \
   ">>> jaro('Brian', 'Jesus')\n" \
   "0.0\n" \
-  ">>> jaro('Thorkel', 'Thorgier')  # doctest: +ELLIPSIS\n" \
-  "0.779761...\n" \
-  ">>> jaro('Dinsdale', 'D')  # doctest: +ELLIPSIS\n" \
-  "0.708333...\n"
+  ">>> jaro('Thorkel', 'Thorgier')\n" \
+  "0.77976190476190477\n" \
+  ">>> jaro('Dinsdale', 'D')\n" \
+  "0.70833333333333337\n"
 
 #define jaro_winkler_DESC \
   "Compute Jaro string similarity metric of two strings.\n" \
@@ -256,17 +253,16 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "more likely to occur near ends of words.\n" \
   "\n" \
   "The prefix weight is inverse value of common prefix length sufficient\n" \
-  "to consider the strings *identical*.  If no prefix weight is\n" \
+  "to consider the strings `identical'.  If no prefix weight is\n" \
   "specified, 1/10 is used.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> jaro_winkler('Brian', 'Jesus')\n" \
   "0.0\n" \
-  ">>> jaro_winkler('Thorkel', 'Thorgier')  # doctest: +ELLIPSIS\n" \
-  "0.867857...\n" \
-  ">>> jaro_winkler('Dinsdale', 'D')  # doctest: +ELLIPSIS\n" \
-  "0.7375...\n" \
+  ">>> jaro_winkler('Thorkel', 'Thorgier')\n" \
+  "0.86785714285714288\n" \
+  ">>> jaro_winkler('Dinsdale', 'D')\n" \
+  "0.73750000000000004\n" \
   ">>> jaro_winkler('Thorkel', 'Thorgier', 0.25)\n" \
   "1.0\n"
 
@@ -282,7 +278,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "in the sequence.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> median(['SpSm', 'mpamm', 'Spam', 'Spa', 'Sua', 'hSam'])\n" \
   "'Spam'\n" \
   ">>> fixme = ['Levnhtein', 'Leveshein', 'Leenshten',\n" \
@@ -308,7 +303,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "given string was not very similar to the actual generalized median.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> fixme = ['Levnhtein', 'Leveshein', 'Leenshten',\n" \
   "...          'Leveshtei', 'Lenshtein', 'Lvenstein',\n" \
   "...          'Levenhtin', 'evenshtei']\n" \
@@ -330,7 +324,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "string from the set; both speedwise and quality-wise.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> fixme = ['Levnhtein', 'Leveshein', 'Leenshten',\n" \
   "...          'Leveshtei', 'Lenshtein', 'Lvenstein',\n" \
   "...          'Levenhtin', 'evenshtei']\n" \
@@ -347,7 +340,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "The returned string is always one of the strings in the sequence.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> setmedian(['ehee', 'cceaes', 'chees', 'chreesc',\n" \
   "...            'chees', 'cheesee', 'cseese', 'chetese'])\n" \
   "'chees'\n" \
@@ -364,7 +356,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "strings.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> seqratio(['newspaper', 'litter bin', 'tinny', 'antelope'],\n" \
   "...          ['caribou', 'sausage', 'gorn', 'woody'])\n" \
   "0.21517857142857144\n"
@@ -379,10 +370,9 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "matter here.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> setratio(['newspaper', 'litter bin', 'tinny', 'antelope'],\n" \
-  "...          ['caribou', 'sausage', 'gorn', 'woody'])  # doctest: +ELLIPSIS\n" \
-  "0.281845...\n" \
+  "...          ['caribou', 'sausage', 'gorn', 'woody'])\n" \
+  "0.28184523809523809\n" \
   "\n" \
   "No, even reordering doesn't help the tinny words to match the\n" \
   "woody ones.\n"
@@ -394,15 +384,14 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "editops(edit_operations, source_length, destination_length)\n" \
   "\n" \
   "The result is a list of triples (operation, spos, dpos), where\n" \
-  "operation is one of 'equal', 'replace', 'insert', or 'delete';  spos\n" \
+  "operation is one of `equal', `replace', `insert', or `delete';  spos\n" \
   "and dpos are position of characters in the first (source) and the\n" \
-  "second (destination) strings.  These are operations on signle\n" \
-  "characters.  In fact the returned list doesn't contain the 'equal',\n" \
+  "second (destination) strings.  These are operations on single\n" \
+  "characters.  In fact the returned list doesn't contain the `equal',\n" \
   "but all the related functions accept both lists with and without\n" \
-  "'equal's.\n" \
+  "`equal's.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> editops('spam', 'park')\n" \
   "[('delete', 0, 0), ('insert', 3, 2), ('replace', 3, 3)]\n" \
   "\n" \
@@ -422,9 +411,8 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "may differ too.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> for x in opcodes('spam', 'park'):\n" \
-  "...     print(x)\n" \
+  "...     print x\n" \
   "...\n" \
   "('delete', 0, 1, 0, 0)\n" \
   "('equal', 1, 3, 0, 2)\n" \
@@ -445,7 +433,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "with both editops and opcodes.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> inverse(editops('spam', 'park'))\n" \
   "[('insert', 0, 0), ('delete', 2, 3), ('replace', 3, 3)]\n" \
   ">>> editops('park', 'spam')\n" \
@@ -460,7 +447,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "of the edit sequence transforming source_string to destination_string.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> e = editops('man', 'scotsman')\n" \
   ">>> apply_edit(e, 'man', 'scotsman')\n" \
   "'scotsman'\n" \
@@ -469,8 +455,8 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "\n" \
   "The other form of edit operations, opcodes, is not very suitable for\n" \
   "such a tricks, because it has to always span over complete strings,\n" \
-  "subsets can be created by carefully replacing blocks with 'equal'\n" \
-  "blocks, or by enlarging 'equal' block at the expense of other blocks\n" \
+  "subsets can be created by carefully replacing blocks with `equal'\n" \
+  "blocks, or by enlarging `equal' block at the expense of other blocks\n" \
   "and adjusting the other blocks accordingly.\n" \
   "\n" \
   "Examples:\n" \
@@ -479,7 +465,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   ">>> apply_edit(inverse(e), b, a)\n" \
   "'spam and eggs'\n" \
   ">>> e[4] = ('equal', 10, 13, 8, 11)\n" \
-  ">>> a, b, e\n" \
   ">>> apply_edit(e, a, b)\n" \
   "'foo and ggs'\n"
 
@@ -494,7 +479,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "have to be actually strings, their lengths are enough.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> a, b = 'spam', 'park'\n" \
   ">>> matching_blocks(editops(a, b), a, b)\n" \
   "[(1, 0, 2), (4, 4, 0)]\n" \
@@ -532,7 +516,6 @@ static PyObject* subtract_edit_py(PyObject *self, PyObject *args);
   "his right mind wants to create subsequences from them.\n" \
   "\n" \
   "Examples:\n" \
-  "\n" \
   ">>> e = editops('man', 'scotsman')\n" \
   ">>> e1 = e[:3]\n" \
   ">>> bastard = apply_edit(e1, 'man', 'scotsman')\n" \
@@ -583,9 +566,9 @@ typedef uint8_t *(*MedianFuncString)(size_t n,
   const uint8_t *strings[],
   const double *weights,
   size_t *medlength);
-typedef wchar_t *(*MedianFuncUnicode)(size_t n,
+typedef Py_UNICODE *(*MedianFuncUnicode)(size_t n,
   const size_t *lengths,
-  const wchar_t *strings[],
+  const Py_UNICODE *strings[],
   const double *weights,
   size_t *medlength);
 typedef struct {
@@ -599,10 +582,10 @@ typedef uint8_t *(*MedianImproveFuncString)(size_t len, const uint8_t *s,
   const uint8_t *strings[],
   const double *weights,
   size_t *medlength);
-typedef wchar_t *(*MedianImproveFuncUnicode)(size_t len, const wchar_t *s,
+typedef Py_UNICODE *(*MedianImproveFuncUnicode)(size_t len, const Py_UNICODE *s,
   size_t n,
   const size_t *lengths,
-  const wchar_t *strings[],
+  const Py_UNICODE *strings[],
   const double *weights,
   size_t *medlength);
 typedef struct {
@@ -618,10 +601,10 @@ typedef double(*SetSeqFuncString)(size_t n1,
   const uint8_t *strings2[]);
 typedef double(*SetSeqFuncUnicode)(size_t n1,
   const size_t *lengths1,
-  const wchar_t *strings1[],
+  const Py_UNICODE *strings1[],
   size_t n2,
   const size_t *lengths2,
-  const wchar_t *strings2[]);
+  const Py_UNICODE *strings2[]);
 
 typedef struct {
   SetSeqFuncString s;
@@ -698,7 +681,7 @@ levenshtein_common(PyObject *args, const char *name, size_t xcost,
     }
   } else if(PyObject_TypeCheck(arg1, &PyUnicode_Type)
     && PyObject_TypeCheck(arg2, &PyUnicode_Type)) {
-    wchar_t *string1, *string2;
+    Py_UNICODE *string1, *string2;
 
     len1 = PyUnicode_GET_SIZE(arg1);
     len2 = PyUnicode_GET_SIZE(arg2);
@@ -706,7 +689,7 @@ levenshtein_common(PyObject *args, const char *name, size_t xcost,
     string1 = PyUnicode_AS_UNICODE(arg1);
     string2 = PyUnicode_AS_UNICODE(arg2);
     {
-      size_t d = lev_u_edit_distance(len1, string1, len2, string2, xcost);
+      size_t d = lev_edit_distance(len1, string1, len2, string2, xcost);
       if(d == std::string::npos) {
         PyErr_NoMemory();
         return -1;
@@ -772,7 +755,7 @@ hamming_py(PyObject *self, PyObject *args) {
     return PyInt_FromLong(dist);
   } else if(PyObject_TypeCheck(arg1, &PyUnicode_Type)
     && PyObject_TypeCheck(arg2, &PyUnicode_Type)) {
-    wchar_t *string1, *string2;
+    Py_UNICODE *string1, *string2;
 
     len1 = PyUnicode_GET_SIZE(arg1);
     len2 = PyUnicode_GET_SIZE(arg2);
@@ -812,7 +795,7 @@ jaro_py(PyObject *self, PyObject *args) {
     return PyFloat_FromDouble(lev_jaro_ratio(len1, string1, len2, string2));
   } else if(PyObject_TypeCheck(arg1, &PyUnicode_Type)
     && PyObject_TypeCheck(arg2, &PyUnicode_Type)) {
-    wchar_t *string1, *string2;
+    Py_UNICODE *string1, *string2;
 
     len1 = PyUnicode_GET_SIZE(arg1);
     len2 = PyUnicode_GET_SIZE(arg2);
@@ -861,7 +844,7 @@ jaro_winkler_py(PyObject *self, PyObject *args) {
       pfweight));
   } else if(PyObject_TypeCheck(arg1, &PyUnicode_Type)
     && PyObject_TypeCheck(arg2, &PyUnicode_Type)) {
-    wchar_t *string1, *string2;
+    Py_UNICODE *string1, *string2;
 
     len1 = PyUnicode_GET_SIZE(arg1);
     len2 = PyUnicode_GET_SIZE(arg2);
@@ -953,7 +936,7 @@ median_common(PyObject *args, const char *name, MedianFuncs foo) {
       free(medstr);
     }
   } else if(stringtype == 1) {
-    wchar_t *medstr = foo.u(n, sizes, strings, weights, &len);
+    Py_UNICODE *medstr = foo.u(n, sizes, strings, weights, &len);
     if(!medstr && len)
       result = PyErr_NoMemory();
     else {
@@ -1035,9 +1018,9 @@ median_improve_common(PyObject *args, const char *name, MedianImproveFuncs foo) 
       free(medstr);
     }
   } else if(stringtype == 1) {
-    wchar_t *s = PyUnicode_AS_UNICODE(arg1);
+    Py_UNICODE *s = PyUnicode_AS_UNICODE(arg1);
     size_t l = PyUnicode_GET_SIZE(arg1);
-    wchar_t *medstr = foo.u(l, s, n, sizes, strings, weights, &len);
+    Py_UNICODE *medstr = foo.u(l, s, n, sizes, strings, weights, &len);
     if(!medstr && len)
       result = PyErr_NoMemory();
     else {
@@ -1171,10 +1154,10 @@ extract_stringlist(PyObject *list, const char *name,
     return 0;
   }
   if(PyObject_TypeCheck(first, &PyUnicode_Type)) {
-    wchar_t **strings;
+    Py_UNICODE **strings;
     size_t *sizes;
 
-    strings = (wchar_t**)malloc(n * sizeof(wchar_t*));
+    strings = (Py_UNICODE**)malloc(n * sizeof(Py_UNICODE*));
     if(!strings) {
       PyErr_NoMemory();
       return -1;
@@ -1202,7 +1185,7 @@ extract_stringlist(PyObject *list, const char *name,
       sizes[i] = PyUnicode_GET_SIZE(item);
     }
 
-    *(wchar_t***)strlist = strings;
+    *(Py_UNICODE***)strlist = strings;
     *sizelist = sizes;
     return 1;
   }
@@ -1268,8 +1251,8 @@ setseq_common(PyObject *args, const char *name, SetSeqFuncs foo,
   strseq1 = PySequence_Fast(strlist1, name);
   strseq2 = PySequence_Fast(strlist2, name);
 
-  n1 = PySequence_Fast_GET_SIZE(strseq1);
-  n2 = PySequence_Fast_GET_SIZE(strseq2);
+  n1 = PySequence_Fast_GET_SIZE(strlist1);
+  n2 = PySequence_Fast_GET_SIZE(strlist2);
   *lensum = n1 + n2;
   if(n1 == 0) {
     Py_DECREF(strseq1);
@@ -1282,13 +1265,13 @@ setseq_common(PyObject *args, const char *name, SetSeqFuncs foo,
     return (double)n1;
   }
 
-  stringtype1 = extract_stringlist(strseq1, name, n1, &sizes1, &strings1);
+  stringtype1 = extract_stringlist(strlist1, name, n1, &sizes1, &strings1);
   Py_DECREF(strseq1);
   if(stringtype1 < 0) {
     Py_DECREF(strseq2);
     return r;
   }
-  stringtype2 = extract_stringlist(strseq2, name, n2, &sizes2, &strings2);
+  stringtype2 = extract_stringlist(strlist2, name, n2, &sizes2, &strings2);
   Py_DECREF(strseq2);
   if(stringtype2 < 0) {
     free(sizes1);
@@ -1330,20 +1313,6 @@ string_to_edittype(PyObject *string) {
 
   /* With Python >= 2.2, we shouldn't get here, except when the strings are
    * not Strings but subtypes. */
-#ifdef LEV_PYTHON3
-   /* For Python 3, the string is an unicode object; use CompareWithAsciiString */
-  if(!PyUnicode_Check(string)) {
-    return LEV_EDIT_LAST;
-  }
-
-  for(i = 0; i < N_OPCODE_NAMES; i++) {
-    if(PyUnicode_CompareWithASCIIString(string, opcode_names[i].cstring) == 0) {
-      return i;
-    }
-  }
-
-#else
-
   if(!PyString_Check(string))
     return LEV_EDIT_LAST;
 
@@ -1351,11 +1320,9 @@ string_to_edittype(PyObject *string) {
   len = PyString_GET_SIZE(string);
   for(i = 0; i < N_OPCODE_NAMES; i++) {
     if(len == opcode_names[i].len
-      && memcmp(s, opcode_names[i].cstring, len) == 0) {
+      && memcmp(s, opcode_names[i].cstring, len) == 0)
       return i;
-    }
   }
-#endif
 
   return LEV_EDIT_LAST;
 }
@@ -1379,7 +1346,8 @@ extract_editops(PyObject *list) {
       return NULL;
     }
     item = PyTuple_GET_ITEM(tuple, 0);
-    if((type = string_to_edittype(item)) == LEV_EDIT_LAST) {
+    if(!PyString_Check(item)
+      || ((type = string_to_edittype(item)) == LEV_EDIT_LAST)) {
       free(ops);
       return NULL;
     }
@@ -1418,35 +1386,31 @@ extract_opcodes(PyObject *list) {
       free(bops);
       return NULL;
     }
-
     item = PyTuple_GET_ITEM(tuple, 0);
-    if((type = string_to_edittype(item)) == LEV_EDIT_LAST) {
+    if(!PyString_Check(item)
+      || ((type = string_to_edittype(item)) == LEV_EDIT_LAST)) {
       free(bops);
       return NULL;
     }
     bops[i].type = type;
-
     item = PyTuple_GET_ITEM(tuple, 1);
     if(!PyInt_Check(item)) {
       free(bops);
       return NULL;
     }
     bops[i].sbeg = (size_t)PyInt_AS_LONG(item);
-
     item = PyTuple_GET_ITEM(tuple, 2);
     if(!PyInt_Check(item)) {
       free(bops);
       return NULL;
     }
     bops[i].send = (size_t)PyInt_AS_LONG(item);
-
     item = PyTuple_GET_ITEM(tuple, 3);
     if(!PyInt_Check(item)) {
       free(bops);
       return NULL;
     }
     bops[i].dbeg = (size_t)PyInt_AS_LONG(item);
-
     item = PyTuple_GET_ITEM(tuple, 4);
     if(!PyInt_Check(item)) {
       free(bops);
@@ -1521,9 +1485,8 @@ editops_py(PyObject *self, PyObject *args) {
   LevOpCode *bops;
 
   if(!PyArg_UnpackTuple(args, PYARGCFIX("editops"), 2, 3,
-    &arg1, &arg2, &arg3)) {
+    &arg1, &arg2, &arg3))
     return NULL;
-  }
 
   /* convert: we were called (bops, s1, s2) */
   if(arg3) {
@@ -1591,13 +1554,13 @@ editops_py(PyObject *self, PyObject *args) {
     ops = lev_editops_find(len1, string1, len2, string2, &n);
   } else if(PyObject_TypeCheck(arg1, &PyUnicode_Type)
     && PyObject_TypeCheck(arg2, &PyUnicode_Type)) {
-    wchar_t *string1, *string2;
+    Py_UNICODE *string1, *string2;
 
     len1 = PyUnicode_GET_SIZE(arg1);
     len2 = PyUnicode_GET_SIZE(arg2);
     string1 = PyUnicode_AS_UNICODE(arg1);
     string2 = PyUnicode_AS_UNICODE(arg2);
-    ops = lev_u_editops_find(len1, string1, len2, string2, &n);
+    ops = lev_editops_find(len1, string1, len2, string2, &n);
   } else {
     PyErr_Format(PyExc_TypeError,
       "editops expected two Strings or two Unicodes");
@@ -1705,13 +1668,13 @@ opcodes_py(PyObject *self, PyObject *args) {
     ops = lev_editops_find(len1, string1, len2, string2, &n);
   } else if(PyObject_TypeCheck(arg1, &PyUnicode_Type)
     && PyObject_TypeCheck(arg2, &PyUnicode_Type)) {
-    wchar_t *string1, *string2;
+    Py_UNICODE *string1, *string2;
 
     len1 = PyUnicode_GET_SIZE(arg1);
     len2 = PyUnicode_GET_SIZE(arg2);
     string1 = PyUnicode_AS_UNICODE(arg1);
     string2 = PyUnicode_AS_UNICODE(arg2);
-    ops = lev_u_editops_find(len1, string1, len2, string2, &n);
+    ops = lev_editops_find(len1, string1, len2, string2, &n);
   } else {
     PyErr_Format(PyExc_TypeError,
       "opcodes expected two Strings or two Unicodes");
@@ -1797,7 +1760,7 @@ apply_edit_py(PyObject *self, PyObject *args) {
     if((ops = extract_editops(list)) != NULL) {
       if(lev_editops_check_errors(len1, len2, n, ops)) {
         PyErr_Format(PyExc_ValueError,
-          "apply_edit edit operations are invalid or inapplicable");
+          "apply_edit edit oprations are invalid or inapplicable");
         free(ops);
         return NULL;
       }
@@ -1813,7 +1776,7 @@ apply_edit_py(PyObject *self, PyObject *args) {
     if((bops = extract_opcodes(list)) != NULL) {
       if(lev_opcodes_check_errors(len1, len2, n, bops)) {
         PyErr_Format(PyExc_ValueError,
-          "apply_edit edit operations are invalid or inapplicable");
+          "apply_edit edit oprations are invalid or inapplicable");
         free(bops);
         return NULL;
       }
@@ -1830,12 +1793,12 @@ apply_edit_py(PyObject *self, PyObject *args) {
     if(!PyErr_Occurred())
       PyErr_Format(PyExc_TypeError,
         "apply_edit first argument must be "
-        "a list of edit operations");
+        "a List of edit operations");
     return NULL;
   }
   if(PyObject_TypeCheck(arg1, &PyUnicode_Type)
     && PyObject_TypeCheck(arg2, &PyUnicode_Type)) {
-    wchar_t *string1, *string2, *s;
+    Py_UNICODE *string1, *string2, *s;
 
     if(!n) {
       Py_INCREF(arg1);
@@ -1849,7 +1812,7 @@ apply_edit_py(PyObject *self, PyObject *args) {
     if((ops = extract_editops(list)) != NULL) {
       if(lev_editops_check_errors(len1, len2, n, ops)) {
         PyErr_Format(PyExc_ValueError,
-          "apply_edit edit operations are invalid or inapplicable");
+          "apply_edit edit oprations are invalid or inapplicable");
         free(ops);
         return NULL;
       }
@@ -1865,11 +1828,11 @@ apply_edit_py(PyObject *self, PyObject *args) {
     if((bops = extract_opcodes(list)) != NULL) {
       if(lev_opcodes_check_errors(len1, len2, n, bops)) {
         PyErr_Format(PyExc_ValueError,
-          "apply_edit edit operations are invalid or inapplicable");
+          "apply_edit edit oprations are invalid or inapplicable");
         free(bops);
         return NULL;
       }
-      s = lev_u_opcodes_apply(len1, string1, len2, string2,
+      s = lev_opcodes_apply(len1, string1, len2, string2,
         n, bops, &len);
       free(bops);
       if(!s && len)
@@ -1882,7 +1845,7 @@ apply_edit_py(PyObject *self, PyObject *args) {
     if(!PyErr_Occurred())
       PyErr_Format(PyExc_TypeError,
         "apply_edit first argument must be "
-        "a list of edit operations");
+        "a List of edit operations");
     return NULL;
   }
 
@@ -1923,7 +1886,7 @@ matching_blocks_py(PyObject *self, PyObject *args) {
   if((ops = extract_editops(list)) != NULL) {
     if(lev_editops_check_errors(len1, len2, n, ops)) {
       PyErr_Format(PyExc_ValueError,
-        "apply_edit edit operations are invalid or inapplicable");
+        "apply_edit edit oprations are invalid or inapplicable");
       free(ops);
       return NULL;
     }
@@ -1938,7 +1901,7 @@ matching_blocks_py(PyObject *self, PyObject *args) {
   if((bops = extract_opcodes(list)) != NULL) {
     if(lev_opcodes_check_errors(len1, len2, n, bops)) {
       PyErr_Format(PyExc_ValueError,
-        "apply_edit edit operations are invalid or inapplicable");
+        "apply_edit edit oprations are invalid or inapplicable");
       free(bops);
       return NULL;
     }
@@ -2007,30 +1970,23 @@ subtract_edit_py(PyObject *self, PyObject *args) {
 }
 
 
-PY_MOD_INIT_FUNC_DEF(_levenshtein) {
-#ifdef LEV_PYTHON3
+PY_MOD_INIT_FUNC_DEF(Levenshtein) {
   PyObject *module;
-#endif
   size_t i;
 
-  PY_INIT_MOD(module, "_levenshtein", Levenshtein_DESC, methods)
+  PY_INIT_MOD(module, "Levenshtein", Levenshtein_DESC, methods)
     /* create intern strings for edit operation names */
     if(opcode_names[0].pystring)
       abort();
   for(i = 0; i < N_OPCODE_NAMES; i++) {
-#ifdef LEV_PYTHON3
-    opcode_names[i].pystring
-      = PyUnicode_InternFromString(opcode_names[i].cstring);
-#else
     opcode_names[i].pystring
       = PyString_InternFromString(opcode_names[i].cstring);
-#endif
     opcode_names[i].len = strlen(opcode_names[i].cstring);
   }
   lev_init_rng(0);
-#ifdef LEV_PYTHON3
+# if PY_MAJOR_VERSION >= 3
   return module;
-#endif
+# endif
 }
 /* }}} */
 #endif /* not NO_PYTHON */
@@ -2783,9 +2739,9 @@ double lev_u_jaro_winkler_ratio(size_t len1, const wchar_t *string1,
 static uint8_t* make_symlist(size_t n, const size_t *lengths,
   const uint8_t *strings[], size_t *symlistlen) {
   /* indexed by ALL symbols, contains 1 for symbols
-                         present in the strings, zero for others */
-  short int symset[0x100] = {};
+     present in the strings, zero for others */
 
+  short int *symset = (size_t*)calloc(0x100, sizeof(short int));
   if(!symset) {
     *symlistlen = std::string::npos;
     return NULL;
@@ -2802,6 +2758,7 @@ static uint8_t* make_symlist(size_t n, const size_t *lengths,
     }
   }
   if(!*symlistlen) {
+    free(symset);
     return NULL;
   }
 
@@ -2812,12 +2769,14 @@ static uint8_t* make_symlist(size_t n, const size_t *lengths,
   uint8_t *symlist = (uint8_t*)malloc((*symlistlen) * sizeof(uint8_t));
   if(!symlist) {
     *symlistlen = std::string::npos;
+    free(symset);
     return NULL;
   }
   for(size_t j = 0; j < 0x100; j++) {
     if(symset[j])
       symlist[pos++] = (uint8_t)j;
   }
+  free(symset);
 
   return symlist;
 }
@@ -3163,7 +3122,7 @@ lev_median_improve(size_t len, const uint8_t *s,
     if(symlistlen != 0)
       return NULL;
     else
-      return (uint8_t*)std::calloc(1, sizeof(uint8_t));
+      return (uint8_t*)calloc(1, sizeof(uint8_t));
   }
 
   /* allocate and initialize per-string matrix rows and a common work buffer */
@@ -5767,7 +5726,7 @@ static LevEditOp* ueditops_from_cost_matrix(size_t len1, const wchar_t *string1,
 }
 
 /**
- * lev_u_editops_find:
+ * lev_editops_find:
  * @len1: The length of @string1.
  * @string1: A string of length @len1, may contain NUL characters.
  * @len2: The length of @string2.
@@ -5956,13 +5915,12 @@ LevEditOp* lev_opcodes_to_editops(size_t nb, const LevOpCode *bops,
  * Returns: The converted block operation codes, as a newly allocated array;
  *          its length is stored in @nb.
  **/
-LevOpCode*
-lev_editops_to_opcodes(size_t n, const LevEditOp *ops, size_t *nb,
+LevOpCode* lev_editops_to_opcodes(size_t n, const LevEditOp *ops, size_t *nb,
   size_t len1, size_t len2) {
   size_t nbl, i, spos, dpos;
   const LevEditOp *o;
   LevOpCode *bops, *b;
-  uint8_t/*LevEditType*/ type = LEV_EDIT_KEEP;;
+  uint8_t/*LevEditType*/ type = LEV_EDIT_KEEP;
 
   /* compute the number of blocks */
   nbl = 0;
@@ -6106,8 +6064,7 @@ lev_editops_to_opcodes(size_t n, const LevEditOp *ops, size_t *nb,
  * Returns: The result of the edit as a newly allocated string, its length
  *          is stored in @len.
  **/
-uint8_t*
-lev_opcodes_apply(size_t len1, const uint8_t *string1,
+uint8_t* lev_opcodes_apply(size_t len1, const uint8_t *string1,
   size_t len2, const uint8_t *string2,
   size_t nb, const LevOpCode *bops,
   size_t *len) {
@@ -6149,7 +6106,7 @@ lev_opcodes_apply(size_t len1, const uint8_t *string1,
 }
 
 /**
- * lev_u_opcodes_apply:
+ * lev_opcodes_apply:
  * @len1: The length of the source string.
  * @string1: A string of length @len1, may contain NUL characters.
  * @len2: The length of the destination string.
@@ -6165,8 +6122,7 @@ lev_opcodes_apply(size_t len1, const uint8_t *string1,
  * Returns: The result of the edit as a newly allocated string, its length
  *          is stored in @len.
  **/
-wchar_t*
-lev_u_opcodes_apply(size_t len1, const wchar_t *string1,
+wchar_t* lev_opcodes_apply(size_t len1, const wchar_t *string1,
   size_t len2, const wchar_t *string2,
   size_t nb, const LevOpCode *bops,
   size_t *len) {
